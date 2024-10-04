@@ -2,6 +2,7 @@ set(Oasis_HEADERS
     # cmake-format: sortable
     Oasis/Add.hpp
     Oasis/BinaryExpression.hpp
+    Oasis/Cosine.hpp
     Oasis/Derivative.hpp
     Oasis/Divide.hpp
     Oasis/EulerNumber.hpp
@@ -18,13 +19,16 @@ set(Oasis_HEADERS
     Oasis/Pi.hpp
     Oasis/Real.hpp
     Oasis/Serialization.hpp
+    Oasis/Sine.hpp
     Oasis/Subtract.hpp
+    Oasis/Tangent.hpp
     Oasis/UnaryExpression.hpp
     Oasis/Undefined.hpp
     Oasis/Variable.hpp)
 
 # Adds a header-only library target called "OasisHeaders"
-add_library(OasisHeaders INTERFACE)
+add_library(OasisHeaders INTERFACE
+        Oasis/Tangent.hpp)
 add_library(Oasis::Headers ALIAS OasisHeaders)
 
 target_compile_features(OasisHeaders INTERFACE cxx_std_20)

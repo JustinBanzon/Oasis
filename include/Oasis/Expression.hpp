@@ -36,7 +36,10 @@ enum class ExpressionType {
     Matrix,
     Pi,
     EulerNumber,
-    Magnitude
+    Magnitude,
+    Sine,
+    Cosine,
+ Tangent,
 };
 
 /**

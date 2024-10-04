@@ -47,6 +47,15 @@ class Derivative;
 template <IExpression Integrand, IExpression Differential>
 class Integral;
 
+template <typename OperandT>
+class Sine;
+
+template <typename OperandT>
+class Cosine;
+
+template <typename OperandT>
+class Tangent;
+
 class SerializationVisitor {
 public:
     virtual void Serialize(const Real& real) = 0;
@@ -66,6 +75,9 @@ public:
     virtual void Serialize(const Magnitude<Expression>& magnitude) = 0;
     virtual void Serialize(const Derivative<Expression, Expression>& derivative) = 0;
     virtual void Serialize(const Integral<Expression, Expression>& integral) = 0;
+    virtual void Serialize(const Sine<Expression>& negate) = 0;
+    virtual void Serialize(const Cosine<Expression>& negate) = 0;
+    virtual void Serialize(const Tangent<Expression>& negate) = 0;
 
     virtual ~SerializationVisitor() = default;
 };
