@@ -16,9 +16,9 @@
 #include <functional>
 
 //sin(0) -> 0
-TEST_CASE("Sine","[Sin]")
+TEST_CASE("Sine Zero","[Sin]")
 {
-    Oasis::Sine sineZero {
+    const Oasis::Sine sineZero {
         Oasis::Real { 0 }
     };
     const auto simplifiedZero = sineZero.Simplify();
@@ -26,9 +26,9 @@ TEST_CASE("Sine","[Sin]")
     REQUIRE(simplifiedZero->Equals(expected));
 }
 //sin(<pi>/2) -> 1
-TEST_CASE("Sine","[Sin]")
+TEST_CASE("Sine Pi/2","[Sin]")
 {
-    Oasis::Sine sineHalfPiMul {
+    const Oasis::Sine sineHalfPiMul {
         Oasis::Multiply{ Oasis::Real{0.5},Oasis::Pi{}}
     };
     const auto simplified = sineHalfPiMul.Simplify();
@@ -36,9 +36,9 @@ TEST_CASE("Sine","[Sin]")
     REQUIRE(simplified->Equals(expected));
 }
 //sin(<pi>) -> 0
-TEST_CASE("Sine","[Sin]")
+TEST_CASE("Sine Pi","[Sin]")
 {
-    Oasis::Sine sinePi {
+    const Oasis::Sine sinePi {
         Oasis::Pi{}
     };
     const auto simplified = sinePi.Simplify();
@@ -46,9 +46,9 @@ TEST_CASE("Sine","[Sin]")
     REQUIRE(simplified->Equals(expected));
 }
 //sin(3*<pi>/2) -> -1
-TEST_CASE("Sine","[Sin]")
+TEST_CASE("Sine 3/2 Pi","[Sin]")
 {
-    Oasis::Sine sineThreeHalvesPiMul {
+    const Oasis::Sine sineThreeHalvesPiMul {
         Oasis::Multiply{ Oasis::Real{1.5},Oasis::Pi{}}
     };
     const auto simplified = sineThreeHalvesPiMul.Simplify();

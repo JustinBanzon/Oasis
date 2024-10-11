@@ -9,7 +9,30 @@
 #include "Real.hpp"
 
 namespace Oasis {
-template <typename OperandT>
+template <IExpression OperandT>
+class Sine;
+
+//To do: get the Add-inspired instance to work
+///@cond
+template<>
+class Sine<
+    Expression> : public UnaryExpression<Sine,Expression> {
+    public:
+    using UnaryExpression::UnaryExpression;
+
+    [[nodiscard]] auto Simplify() const -> std::unique_ptr<Expression> final;
+    auto Simplify(tf::Subflow& subflow) const -> std::unique_ptr<Expression> final;
+
+    [[nodiscard]] auto Integrate(const Expression& integrationVariable) const -> std::unique_ptr<Expression> final;
+    [[nodiscard]] auto Differentiate(const Expression& differentiationVariable) const -> std::unique_ptr<Expression> final;
+
+    DECL_SPECIALIZE(Sine)
+
+    EXPRESSION_TYPE(Sine)
+    EXPRESSION_CATEGORY(UnExp)
+};
+///@endcond
+template <typename OperandT = Expression>
 class Sine final : public UnaryExpression<Sine, OperandT> {
 public:
     Sine() = default;
@@ -24,17 +47,41 @@ public:
     {
     }
 
-
-    [[nodiscard]] auto Simplify() const -> std::unique_ptr<Expression> override;
-
-    auto Simplify(tf::Subflow& subflow) const -> std::unique_ptr<Expression> override
-    {
-        return Multiply {
-            Real { -1.0 },
-            this->GetOperand()
-        }
-        .Simplify(subflow);
-    }
+    // In case things break
+    // [[nodiscard]] auto Simplify() const -> std::unique_ptr<Expression> override {
+    //     return this->Copy();
+    //     //if operand exists, then simplify it otherwise set to null
+    //     // auto simplifiedOper = this->HasOperand() ? this->GetOperand().Simplify() : nullptr; ;
+    //     // //Create a new Sine instance
+    //     // Sine simplifiedSine {*simplifiedOper};
+    //     // //for a simplified operand x:
+    //     // //If x is a real, calculate sin(x)
+    //     // if (auto realCase = Sine<Real>::Specialize(simplifiedSine); realCase != nullptr) {
+    //     //     const Real& oper = realCase->GetOperand();
+    //     //
+    //     //     return std::make_unique<Real>(sin(oper.GetValue()));
+    //     // }
+    //     // //If x is pi, return 0
+    //     // if (auto piCase = Pi::Specialize(*simplifiedOper); piCase != nullptr) {
+    //     //     return std::make_unique<Real>(0);
+    //     // }
+    //     // //If x is a real multiple of pi, return sin(n*pi)
+    //     // if (auto piCase = Multiply<Real, Pi>::Specialize(*simplifiedOper); piCase != nullptr) {
+    //     //     const Real& oper1 = piCase->GetMostSigOp();
+    //     //     const double pi = Pi::GetValue();
+    //     //     return std::make_unique<Real>(sin(oper1.GetValue()*pi));
+    //     // }
+    //     // //If the result is zero, return zero
+    //     //
+    //     // //default case
+    //     // return simplifiedSine.Copy();
+    // }
+    //
+    // // IGNORE
+    // auto Simplify(tf::Subflow& subflow) const -> std::unique_ptr<Expression> override
+    // {
+    //     return this->Copy();
+    // }
 
     [[nodiscard]] auto Differentiate(const Expression& var) const -> std::unique_ptr<Expression> override
     {
