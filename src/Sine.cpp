@@ -4,6 +4,7 @@
 
 #include "Oasis/Sine.hpp"
 #include "Oasis/Multiply.hpp"
+#include "Oasis/Divide.hpp"
 #include "Oasis/Pi.hpp"
 #include "Oasis/Real.hpp"
 
@@ -21,7 +22,17 @@ auto Sine<Expression>::Simplify() const -> std::unique_ptr<Expression>
     if (auto PiCase = Pi::Specialize(*simplifiedOperand); PiCase != nullptr) {
         return std::make_unique<Real>(0);
     }
-
+    if (auto RealCase = Real::Specialize(*simplifiedOperand); RealCase != nullptr) {
+        return std::make_unique<Real>(sin(RealCase->GetValue()));
+    }
+    if (auto MulPiCase = Multiply<Pi,Real>::Specialize(*simplifiedOperand); MulPiCase != nullptr) {
+        const Real& multiple = MulPiCase->GetLeastSigOp();
+        return std::make_unique<Real>(sin(Pi::GetValue()*multiple.GetValue()));
+    }
+    if (auto DivPiCase = Divide<Pi,Real>::Specialize(*simplifiedOperand); DivPiCase != nullptr) {
+        const Real& divisor = DivPiCase->GetLeastSigOp();
+        return std::make_unique<Real>(sin(Pi::GetValue()/divisor.GetValue()));
+    }
     return std::make_unique<Real>(-128);
 }
 

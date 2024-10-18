@@ -10,60 +10,57 @@
 #include "Real.hpp"
 
 namespace Oasis {
-template <typename OperandT>
-class Tangent final : public UnaryExpression<Tangent, OperandT> {
-public:
-    Tangent() = default;
-    //cos(x) operand = x
-    Tangent(const Tangent& other)
-        : UnaryExpression<Tangent, OperandT>(other)
-    {
-    }
+    template <IExpression OperandT>
+    class Tangent;
 
-    explicit Tangent(const OperandT& operand)
-        : UnaryExpression<Tangent, OperandT>(operand)
-    {
-    }
+    /// @cond
+    template <>
+    class Tangent<Expression> : public UnaryExpression<Tangent, Expression> {
+    public:
+        //    using UnaryExpression::UnaryExpression;
 
+        Tangent() = default;
+        Tangent(const Tangent<Expression>& other) = default;
 
-    [[nodiscard]] auto Simplify() const -> std::unique_ptr<Expression> override;
+        Tangent(const Expression& Operand);
 
-    auto Simplify(tf::Subflow& subflow) const -> std::unique_ptr<Expression> override
-    {
-        return Multiply {
-            Real { -1.0 },
-            this->GetOperand()
+        [[nodiscard]] auto Simplify() const -> std::unique_ptr<Expression> final;
+
+        [[nodiscard]] auto Integrate(const Expression& integrationVariable) const -> std::unique_ptr<Expression> final;
+        [[nodiscard]] auto Differentiate(const Expression& differentiationVariable) const -> std::unique_ptr<Expression> final;
+
+        DECL_SPECIALIZE(Tangent)
+
+        EXPRESSION_TYPE(Tangent)
+        EXPRESSION_CATEGORY(UnExp)
+    };
+    /// @endcond
+
+    /**
+     * The Tangent expression calculates the Tangent value of the operand.
+     *
+     * @tparam OperandT The type of the expression to add be added to.
+     */
+    template <IExpression OperandT = Expression>
+    class Tangent : public UnaryExpression<Tangent, OperandT> {
+    public:
+        Tangent() = default;
+        Tangent(const Tangent<OperandT>& other)
+            : UnaryExpression<Oasis::Tangent, OperandT>(other)
+        {
         }
-        .Simplify(subflow);
-    }
 
-    [[nodiscard]] auto Differentiate(const Expression& var) const -> std::unique_ptr<Expression> override
-    {
-        const std::unique_ptr<Expression> operandDerivative = this->GetOperand().Differentiate(var);
-        return Tangent<Expression> {
-            //(d/dx) sin(f(x)) -> cos(f(x))*(d/dx)f(x)
-            //(d/dx) sin(x) -> cos(x)
-            *operandDerivative
+        explicit Tangent(const OperandT& operand)
+            : UnaryExpression<Oasis::Tangent, OperandT>(operand)
+        {
         }
-        .Simplify();
-    }
 
+        IMPL_SPECIALIZE_UNARYEXPR(Tangent, OperandT)
 
-    [[nodiscard]] auto Integrate(const Expression& integrationVar) const -> std::unique_ptr<Expression> override
-    {
-        // TODO: Implement
-        const std::unique_ptr<Expression> operandDerivative = this->GetOperand().Integrate(integrationVar);
-        return Tangent<Expression> {
-            //
-            *operandDerivative
-        }
-        .Simplify();
-    }
+        auto operator=(const Tangent& other) -> Tangent& = default;
 
-    IMPL_SPECIALIZE_UNARYEXPR(Tangent, OperandT)
-
-    EXPRESSION_TYPE(Tangent)
-    EXPRESSION_CATEGORY(UnExp)
+        EXPRESSION_TYPE(Tangent)
+        EXPRESSION_CATEGORY(0)
     };
 }
 #endif //TANGENT_HPP

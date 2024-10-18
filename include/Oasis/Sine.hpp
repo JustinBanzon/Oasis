@@ -10,7 +10,6 @@
 
 namespace Oasis {
 
-// TODO: Fix so function(s) can be implemented in other files.
 
 template <IExpression OperandT>
 class Sine;

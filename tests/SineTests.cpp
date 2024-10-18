@@ -8,6 +8,7 @@
 #include "Oasis/Exponent.hpp"
 #include "Oasis/Imaginary.hpp"
 #include "Oasis/Multiply.hpp"
+#include "Oasis/Divide.hpp"
 #include "Oasis/Real.hpp"
 #include "Oasis/Sine.hpp"
 #include "Oasis/Pi.hpp"
@@ -26,12 +27,21 @@ TEST_CASE("Sine Zero","[Sin]")
     REQUIRE(simplifiedZero->Equals(expected));
 }
 //sin(<pi>/2) -> 1
-TEST_CASE("Sine Pi/2","[Sin]")
+TEST_CASE("Sine 1/2 Pi","[Sin]")
 {
     const Oasis::Sine sineHalfPiMul {
         Oasis::Multiply{ Oasis::Real{0.5},Oasis::Pi{}}
     };
     const auto simplified = sineHalfPiMul.Simplify();
+    const Oasis::Real expected {1} ;
+    REQUIRE(simplified->Equals(expected));
+}
+TEST_CASE("Sine Pi/2","[Sin]")
+{
+    const Oasis::Sine sineHalfPiDiv {
+        Oasis::Divide{ Oasis::Pi{},Oasis::Real{2}}
+    };
+    const auto simplified = sineHalfPiDiv.Simplify();
     const Oasis::Real expected {1} ;
     REQUIRE(simplified->Equals(expected));
 }

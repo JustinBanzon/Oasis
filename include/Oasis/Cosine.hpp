@@ -10,60 +10,56 @@
 #include "Real.hpp"
 
 namespace Oasis {
-template <typename OperandT>
-class Cosine final : public UnaryExpression<Cosine, OperandT> {
-public:
-    Cosine() = default;
-    //cos(x) operand = x
-    Cosine(const Cosine& other)
-        : UnaryExpression<Cosine, OperandT>(other)
-    {
-    }
+    template <IExpression OperandT>
+    class Cosine;
 
-    explicit Cosine(const OperandT& operand)
-        : UnaryExpression<Cosine, OperandT>(operand)
-    {
-    }
+    /// @cond
+    template <>
+    class Cosine<Expression> : public UnaryExpression<Cosine, Expression> {
+    public:
+        //    using UnaryExpression::UnaryExpression;
 
+        Cosine() = default;
+        Cosine(const Cosine<Expression>& other) = default;
 
-    [[nodiscard]] auto Simplify() const -> std::unique_ptr<Expression> override;
+        Cosine(const Expression& Operand);
 
-    auto Simplify(tf::Subflow& subflow) const -> std::unique_ptr<Expression> override
-    {
-        return Multiply {
-            Real { -1.0 },
-            this->GetOperand()
-        }
-        .Simplify(subflow);
-    }
+        [[nodiscard]] auto Simplify() const -> std::unique_ptr<Expression> final;
 
-    [[nodiscard]] auto Differentiate(const Expression& var) const -> std::unique_ptr<Expression> override
-    {
-        const std::unique_ptr<Expression> operandDerivative = this->GetOperand().Differentiate(var);
-        return Cosine<Expression> {
-            //(d/dx) sin(f(x)) -> cos(f(x))*(d/dx)f(x)
-            //(d/dx) sin(x) -> cos(x)
-            *operandDerivative
-        }
-        .Simplify();
-    }
+        [[nodiscard]] auto Integrate(const Expression& integrationVariable) const -> std::unique_ptr<Expression> final;
+        [[nodiscard]] auto Differentiate(const Expression& differentiationVariable) const -> std::unique_ptr<Expression> final;
 
+        DECL_SPECIALIZE(Cosine)
 
-    [[nodiscard]] auto Integrate(const Expression& integrationVar) const -> std::unique_ptr<Expression> override
-    {
-        // TODO: Implement
-        const std::unique_ptr<Expression> operandDerivative = this->GetOperand().Integrate(integrationVar);
-        return Cosine<Expression> {
-            //
-            *operandDerivative
-        }
-        .Simplify();
-    }
-
-    IMPL_SPECIALIZE_UNARYEXPR(Cosine, OperandT)
-
-    EXPRESSION_TYPE(Cosine)
-    EXPRESSION_CATEGORY(UnExp)
+        EXPRESSION_TYPE(Cosine)
+        EXPRESSION_CATEGORY(UnExp)
     };
-}
+    /// @endcond
+
+    /**
+     * The Cosine expression calculates the Cosine value of the operand.
+     *
+     * @tparam OperandT The type of the expression to add be added to.
+     */
+    template <IExpression OperandT = Expression>
+    class Cosine : public UnaryExpression<Cosine, OperandT> {
+    public:
+        Cosine() = default;
+        Cosine(const Cosine<OperandT>& other)
+            : UnaryExpression<Oasis::Cosine, OperandT>(other)
+        {
+        }
+
+        explicit Cosine(const OperandT& operand)
+            : UnaryExpression<Oasis::Cosine, OperandT>(operand)
+        {
+        }
+
+        IMPL_SPECIALIZE_UNARYEXPR(Cosine, OperandT)
+
+        auto operator=(const Cosine& other) -> Cosine& = default;
+
+        EXPRESSION_TYPE(Cosine)
+        EXPRESSION_CATEGORY(0)
+    };}
 #endif //COSINE_HPP
