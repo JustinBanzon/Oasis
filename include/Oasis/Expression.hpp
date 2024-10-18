@@ -33,9 +33,7 @@ enum class ExpressionType {
     Pi,
     EulerNumber,
     Magnitude,
-    Sine,
-    Cosine,
- Tangent,
+    Sine
 };
 
 /**
