@@ -33,6 +33,11 @@ auto Sine<Expression>::Simplify() const -> std::unique_ptr<Expression>
         const Real& divisor = DivPiCase->GetLeastSigOp();
         return std::make_unique<Real>(sin(Pi::GetValue()/divisor.GetValue()));
     }
+    if (auto MulDivPiCase = Divide<Multiply<Pi,Real>,Real>::Specialize(*simplifiedOperand); MulDivPiCase != nullptr) {
+        const Real& divisor = MulDivPiCase->GetLeastSigOp();
+        const Real& multiple = MulDivPiCase->GetMostSigOp().GetLeastSigOp();
+        return std::make_unique<Real>(sin(Pi::GetValue()*multiple.GetValue()/divisor.GetValue()));
+    }
     return std::make_unique<Real>(-128);
 }
 

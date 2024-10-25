@@ -15,7 +15,9 @@
 #include "Oasis/Variable.hpp"
 
 #include <functional>
+#include <iostream>
 
+#define EPSILON 1e-6
 //sin(0) -> 0
 TEST_CASE("Sine Zero","[Sin]")
 {
@@ -45,6 +47,37 @@ TEST_CASE("Sine Pi/2","[Sin]")
     const Oasis::Real expected {1} ;
     REQUIRE(simplified->Equals(expected));
 }
+TEST_CASE("Sine Pi/3","[Sin]")
+{
+    std::cout<<"Testing sin(Pi/3)"<<std::endl;
+    const Oasis::Sine sineQuarterPiDiv {
+        Oasis::Divide{ Oasis::Pi{},Oasis::Real{3}}
+    };
+    const auto simplified = sineQuarterPiDiv.Simplify();
+    const Oasis::Real expected {(std::sqrt(3)/2)} ;
+    REQUIRE(simplified->Equals(expected));
+}
+TEST_CASE("Sine Pi/4","[Sin]")
+{
+    std::cout<<"Testing sin(Pi/4)"<<std::endl;
+    const Oasis::Sine sinThirdPiDiv {
+        Oasis::Divide{ Oasis::Pi{},Oasis::Real{4}}
+    };
+    const auto simplified = sinThirdPiDiv.Simplify();
+    const Oasis::Real expected {(std::sqrt(2)/2)} ;
+    REQUIRE(simplified->Equals(expected));
+}
+TEST_CASE("Sine Pi/6","[Sin]")
+{
+    std::cout<<"Testing sin(Pi/6)"<<std::endl;
+    const Oasis::Sine sinSixthPiDiv {
+        Oasis::Divide{ Oasis::Pi{},Oasis::Real{6}}
+    };
+    const auto simplified = sinSixthPiDiv.Simplify();
+    auto simplified_real = Oasis::Real::Specialize(*simplified);
+    std::cout <<"sine returned value "<< simplified_real->GetValue() <<std::endl;
+    REQUIRE_THAT(simplified_real->GetValue(), Catch::Matchers::WithinAbs(0.5, EPSILON));
+}
 //sin(<pi>) -> 0
 TEST_CASE("Sine Pi","[Sin]")
 {
@@ -63,5 +96,26 @@ TEST_CASE("Sine 3/2 Pi","[Sin]")
     };
     const auto simplified = sineThreeHalvesPiMul.Simplify();
     const Oasis::Real expected {-1} ;
+    REQUIRE(simplified->Equals(expected));
+}
+
+TEST_CASE("Sine 3Pi/2","[Sin]")
+{
+    std::cout<<"Testing sin(3Pi/2)"<<std::endl;
+    const Oasis::Sine sineThreeHalvesPiMulDiv {
+         Oasis::Divide{ Oasis::Multiply{ Oasis::Real{3},Oasis::Pi{}},Oasis::Real{2}}
+    };
+    const auto simplified = sineThreeHalvesPiMulDiv.Simplify();
+    const Oasis::Real expected {-1} ;
+    REQUIRE(simplified->Equals(expected));
+}
+TEST_CASE("Sine 3Pi/4","[Sin]")
+{
+    std::cout<<"Testing sin(3Pi/4)"<<std::endl;
+    const Oasis::Sine sineThreeHalvesPiMulDiv {
+        Oasis::Divide{ Oasis::Multiply{ Oasis::Real{3},Oasis::Pi{}},Oasis::Real{4}}
+    };
+    const auto simplified = sineThreeHalvesPiMulDiv.Simplify();
+    const Oasis::Real expected {(std::sqrt(2)/2)} ;
     REQUIRE(simplified->Equals(expected));
 }

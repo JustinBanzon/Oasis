@@ -8,6 +8,7 @@
 #include "Oasis/Integral.hpp"
 #include "Oasis/Log.hpp"
 #include "Oasis/Matrix.hpp"
+#include "Oasis/Divide.hpp"
 #include "Oasis/Multiply.hpp"
 #include "Oasis/Pi.hpp"
 #include "Oasis/Cosine.hpp"
@@ -15,35 +16,32 @@
 #define EPSILON 10E-6
 
 namespace Oasis {
-auto Cosine<Expression>::Simplify() const -> std::unique_ptr<Expression>
-{
-    //if operand exists, then simplify it otherwise set to null
-    auto simplifiedOper = HasOperand() ? this->GetOperand().Simplify() : nullptr; ;
-    //Create a new Cosine instance
-    Cosine simplifiedCosine {*simplifiedOper};
-    //for a simplified operand x:
-    //If x is a real, calculate sin(x)
-    if (auto realCase = Cosine<Real>::Specialize(simplifiedCosine); realCase != nullptr) {
-        const Real& oper = realCase->GetOperand();
+    auto Cosine<Expression>::Simplify() const -> std::unique_ptr<Expression>
+    {
+        //    std::cout<<"Cosine Simplify"<<std::endl;
+        auto simplifiedOperand = op ? op->Simplify() : nullptr;
 
-        return std::make_unique<Real>(cos(oper.GetValue()));
+        if (auto PiCase = Pi::Specialize(*simplifiedOperand); PiCase != nullptr) {
+            return std::make_unique<Real>(1);
+        }
+        if (auto RealCase = Real::Specialize(*simplifiedOperand); RealCase != nullptr) {
+            return std::make_unique<Real>(cos(RealCase->GetValue()));
+        }
+        if (auto MulPiCase = Multiply<Pi,Real>::Specialize(*simplifiedOperand); MulPiCase != nullptr) {
+            const Real& multiple = MulPiCase->GetLeastSigOp();
+            return std::make_unique<Real>(cos(Pi::GetValue()*multiple.GetValue()));
+        }
+        if (auto DivPiCase = Divide<Pi,Real>::Specialize(*simplifiedOperand); DivPiCase != nullptr) {
+            const Real& divisor = DivPiCase->GetLeastSigOp();
+            return std::make_unique<Real>(cos(Pi::GetValue()/divisor.GetValue()));
+        }
+        if (auto MulDivPiCase = Divide<Multiply<Pi,Real>,Real>::Specialize(*simplifiedOperand); MulDivPiCase != nullptr) {
+            const Real& divisor = MulDivPiCase->GetLeastSigOp();
+            const Real& multiple = MulDivPiCase->GetMostSigOp().GetLeastSigOp();
+            return std::make_unique<Real>(cos(Pi::GetValue()*multiple.GetValue()/divisor.GetValue()));
+        }
+        return std::make_unique<Real>(-128);
     }
-    //If x is pi, return -1
-    if (auto piCase = Pi::Specialize(*simplifiedOper); piCase != nullptr) {
-        return std::make_unique<Real>(-1);
-    }
-    //If x is a real multiple of pi, return cos(n*pi)
-    if (auto piCase = Multiply<Real, Pi>::Specialize(*simplifiedOper); piCase != nullptr) {
-        const Real& oper1 = piCase->GetMostSigOp();
-        const double pi = Pi::GetValue();
-        return std::make_unique<Real>(cos(oper1.GetValue()*pi));
-    }
-
-    //If the result is zero, return zero
-
-    //default case
-    return simplifiedCosine.Copy();
-}
 
 
 
