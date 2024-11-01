@@ -6,47 +6,40 @@
 #include "Oasis/Exponent.hpp"
 #include "Oasis/Imaginary.hpp"
 #include "Oasis/Integral.hpp"
-#include "Oasis/Log.hpp"
-#include "Oasis/Undefined.hpp"
-#include "Oasis/Divide.hpp"
+#include "Oasis/Negate.hpp"
 #include "Oasis/Matrix.hpp"
+#include "Oasis/Divide.hpp"
 #include "Oasis/Multiply.hpp"
 #include "Oasis/Pi.hpp"
+#include "Oasis/Sine.hpp"
 #include "Oasis/Secant.hpp"
-#include "Oasis/Tangent.hpp"
 
 #define EPSILON 10E-6
 
 namespace Oasis {
-    auto Tangent<Expression>::Simplify() const -> std::unique_ptr<Expression>
+    auto Secant<Expression>::Simplify() const -> std::unique_ptr<Expression>
     {
         //    std::cout<<"Cosine Simplify"<<std::endl;
         auto simplifiedOperand = op ? op->Simplify() : nullptr;
 
         if (auto PiCase = Pi::Specialize(*simplifiedOperand); PiCase != nullptr) {
-            return std::make_unique<Real>(0);
+            return std::make_unique<Real>(1);
         }
         if (auto RealCase = Real::Specialize(*simplifiedOperand); RealCase != nullptr) {
-            auto result = tan(RealCase->GetValue());
-            try {
-                return std::make_unique<Real>(result);
-            } catch (...) {
-                return std::make_unique<Undefined>(Undefined());
+            auto val = cos(RealCase->GetValue();
+            if (abs(val) < EPSILON) {
+             return std::make_unique<Undefined>(Undefined());
             }
+            return std::make_unique<Real>(1/val));
         }
         if (auto MulPiCase = Multiply<Pi,Real>::Specialize(*simplifiedOperand); MulPiCase != nullptr) {
+            auto val = cos(Pi::GetValue()*multiple.GetValue());
+            if (abs(val) < EPSILON) {}
             const Real& multiple = MulPiCase->GetLeastSigOp();
-            if(multiple.GetValue()-floor(multiple.GetValue())==0.5 || multiple.GetValue()-floor(multiple.GetValue())==-0.5) {
-                return std::make_unique<Undefined>(Undefined());
-            }
-            return std::make_unique<Real>(cos(Pi::GetValue()*multiple.GetValue()));
-
+            return std::make_unique<Real>(1/val);
         }
         if (auto DivPiCase = Divide<Pi,Real>::Specialize(*simplifiedOperand); DivPiCase != nullptr) {
             const Real& divisor = DivPiCase->GetLeastSigOp();
-            if(divisor.GetValue()==2) {
-                return std::make_unique<Undefined>(Undefined());
-            }
             return std::make_unique<Real>(cos(Pi::GetValue()/divisor.GetValue()));
         }
         if (auto MulDivPiCase = Divide<Multiply<Pi,Real>,Real>::Specialize(*simplifiedOperand); MulDivPiCase != nullptr) {
@@ -55,16 +48,15 @@ namespace Oasis {
             return std::make_unique<Real>(cos(Pi::GetValue()*multiple.GetValue()/divisor.GetValue()));
         }
         return std::make_unique<Real>(-128);
-
     }
 
-//tan(x) = sin(x)/cos(x), d/dx(tan(f(x))) = cos^2(f(x))+sin^2(f(x))/cos^2(f(x))*d/dx(f(x)) = sec^2(f(x))*d/dx(f(x))
 
-    auto Tangent<Expression>::Differentiate(const Expression& differentiationVariable) const -> std::unique_ptr<Expression>
+    auto Secant<Expression>::Differentiate(const Expression& differentiationVariable) const -> std::unique_ptr<Expression>
     {
-        // TODO: Implement Secant
-        // d/dx(tan(f(x))) = sec^2(f(x))*d/dx(f(x))
-        return Multiply<Expression>{Secant(this->GetOperand())/*-sin(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
+        // ToDo: implement Secant derivative
+        // d/dx(cos(f(x))) = sin(f(x))*d/dx(f(x))
+        return Multiply<Expression>{Multiply(Sine(this->GetOperand()),Exponent(Secant(this->GetOperand()),Real(2)))/*-sin(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
     }
+
 
 }

@@ -13,12 +13,12 @@
 #include "Oasis/Multiply.hpp"
 #include "Oasis/Pi.hpp"
 #include "Oasis/Secant.hpp"
-#include "Oasis/Tangent.hpp"
+#include "Oasis/Cotangent.hpp"
 
 #define EPSILON 10E-6
 
 namespace Oasis {
-    auto Tangent<Expression>::Simplify() const -> std::unique_ptr<Expression>
+    auto Cotangent<Expression>::Simplify() const -> std::unique_ptr<Expression>
     {
         //    std::cout<<"Cosine Simplify"<<std::endl;
         auto simplifiedOperand = op ? op->Simplify() : nullptr;
@@ -60,7 +60,7 @@ namespace Oasis {
 
 //tan(x) = sin(x)/cos(x), d/dx(tan(f(x))) = cos^2(f(x))+sin^2(f(x))/cos^2(f(x))*d/dx(f(x)) = sec^2(f(x))*d/dx(f(x))
 
-    auto Tangent<Expression>::Differentiate(const Expression& differentiationVariable) const -> std::unique_ptr<Expression>
+    auto Cotangent<Expression>::Differentiate(const Expression& differentiationVariable) const -> std::unique_ptr<Expression>
     {
         // TODO: Implement Secant
         // d/dx(tan(f(x))) = sec^2(f(x))*d/dx(f(x))

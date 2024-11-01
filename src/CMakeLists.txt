@@ -31,7 +31,10 @@ set(Oasis_SOURCES
     Variable.cpp
     Sine.cpp
     Cosine.cpp
-    Tangent.cpp)
+    Tangent.cpp
+    Cosecant.cpp
+    Secant.cpp
+    Cotangent.cpp)
 
 # Adds a library target called "Oasis" to be built from source files.
 add_library(Oasis ${Oasis_SOURCES})

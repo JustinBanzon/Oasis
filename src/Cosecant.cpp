@@ -2,7 +2,7 @@
 // Created by Andrew Nazareth on 10/8/24.
 //
 
-#include "Oasis/Sine.hpp"
+#include "Oasis/Cosecant.hpp"
 #include "Oasis/Multiply.hpp"
 #include "Oasis/Cosine.hpp"
 #include "Oasis/Divide.hpp"
@@ -13,12 +13,12 @@
 #include "Oasis/Negate.hpp"
 
 namespace Oasis {
-Sine<Expression>::Sine(const Expression& operand)
+Cosecant<Expression>::Cosecant(const Expression& operand)
     : UnaryExpression(operand)
 {
 }
 
-auto Sine<Expression>::Simplify() const -> std::unique_ptr<Expression>
+auto Cosecant<Expression>::Simplify() const -> std::unique_ptr<Expression>
 {
     //    std::cout<<"Sine Simplify"<<std::endl;
     auto simplifiedOperand = op ? op->Simplify() : nullptr;
@@ -45,7 +45,7 @@ auto Sine<Expression>::Simplify() const -> std::unique_ptr<Expression>
     return std::make_unique<Real>(-128);
 }
 
-auto Sine<Expression>::Integrate(const Expression& integrationVariable) const -> std::unique_ptr<Expression>
+auto Cosecant<Expression>::Integrate(const Expression& integrationVariable) const -> std::unique_ptr<Expression>
 {
     // TODO: Implement
     //integral(sin(x) dv)= sin(x)*v-integral(v cos(x) dx)
@@ -59,7 +59,7 @@ auto Sine<Expression>::Integrate(const Expression& integrationVariable) const ->
     return integral.Copy();
 }
 
-auto Sine<Expression>::Differentiate(const Expression& differentiationVariable) const -> std::unique_ptr<Expression>
+auto Cosecant<Expression>::Differentiate(const Expression& differentiationVariable) const -> std::unique_ptr<Expression>
 {
     // d/dx sin(f(x)) = cos(f(x))*d/dxf(x)
     return Multiply<Expression>{Cosine(this->GetOperand())/*cos(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();

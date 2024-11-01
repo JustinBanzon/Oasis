@@ -47,7 +47,6 @@ namespace Oasis {
 
     auto Cosine<Expression>::Differentiate(const Expression& differentiationVariable) const -> std::unique_ptr<Expression>
     {
-        // TODO: Implement
         // d/dx(cos(f(x))) = sin(f(x))*d/dx(f(x))
         return Multiply<Expression>{Negate(Sine(this->GetOperand()))/*-sin(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
     }
