@@ -8,6 +8,7 @@
 #include "Oasis/Integral.hpp"
 #include "Oasis/Log.hpp"
 #include "Oasis/Undefined.hpp"
+#include "Oasis/Divide.hpp"
 #include "Oasis/Matrix.hpp"
 #include "Oasis/Multiply.hpp"
 #include "Oasis/Pi.hpp"
