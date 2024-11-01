@@ -6,11 +6,12 @@
 #include "Oasis/Exponent.hpp"
 #include "Oasis/Imaginary.hpp"
 #include "Oasis/Integral.hpp"
-#include "Oasis/Log.hpp"
+#include "Oasis/Negate.hpp"
 #include "Oasis/Matrix.hpp"
 #include "Oasis/Divide.hpp"
 #include "Oasis/Multiply.hpp"
 #include "Oasis/Pi.hpp"
+#include "Oasis/Sine.hpp"
 #include "Oasis/Cosine.hpp"
 
 #define EPSILON 10E-6
@@ -44,7 +45,12 @@ namespace Oasis {
     }
 
 
-
+    auto Cosine<Expression>::Differentiate(const Expression& differentiationVariable) const -> std::unique_ptr<Expression>
+    {
+        // TODO: Implement
+        // d/dx(cos(f(x))) = sin(f(x))*d/dx(f(x))
+        return Multiply<Expression>{Negate(Sine(this->GetOperand()))/*-sin(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
+    }
 
 
 }

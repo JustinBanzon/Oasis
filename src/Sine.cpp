@@ -4,9 +4,13 @@
 
 #include "Oasis/Sine.hpp"
 #include "Oasis/Multiply.hpp"
+#include "Oasis/Cosine.hpp"
 #include "Oasis/Divide.hpp"
 #include "Oasis/Pi.hpp"
 #include "Oasis/Real.hpp"
+#include "Oasis/Integral.hpp"
+#include "Oasis/Variable.hpp"
+#include "Oasis/Negate.hpp"
 
 namespace Oasis {
 Sine<Expression>::Sine(const Expression& operand)
@@ -44,13 +48,22 @@ auto Sine<Expression>::Simplify() const -> std::unique_ptr<Expression>
 auto Sine<Expression>::Integrate(const Expression& integrationVariable) const -> std::unique_ptr<Expression>
 {
     // TODO: Implement
-    return Expression::Integrate(integrationVariable);
+    //integral(sin(x) dv)= sin(x)*v-integral(v cos(x) dx)
+    //integrate(sin(x) dx) = -cos(x)
+    if(auto variable = Variable::Specialize(integrationVariable); variable != nullptr) {
+        //integrate(sin(x) dx) = -cos(x) + C
+        return Negate(Cosine(integrationVariable)).Specialize(*variable);
+    }
+    Integral<Expression> integral { *(this->Copy()), *(integrationVariable.Copy()) };
+
+    return integral.Copy();
 }
 
 auto Sine<Expression>::Differentiate(const Expression& differentiationVariable) const -> std::unique_ptr<Expression>
 {
     // TODO: Implement
-    return Expression::Differentiate(differentiationVariable);
+    // d/dx sin(f(x)) = cos(f(x))*d/dxf(x)
+    return Multiply<Expression>{Cosine(this->GetOperand())/*cos(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
 }
 
 }
