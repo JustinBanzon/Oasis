@@ -6,7 +6,7 @@
 #include "Oasis/Exponent.hpp"
 #include "Oasis/Imaginary.hpp"
 #include "Oasis/Integral.hpp"
-#include "Oasis/Log.hpp"
+#include "Oasis/Negate.hpp"
 #include "Oasis/Undefined.hpp"
 #include "Oasis/Divide.hpp"
 #include "Oasis/Matrix.hpp"
@@ -64,7 +64,7 @@ namespace Oasis {
     {
         // TODO: Implement Secant
         // d/dx(tan(f(x))) = sec^2(f(x))*d/dx(f(x))
-        return Multiply<Expression>{Exponent(Cosecant(this->GetOperand()),Real(2))/*-sin(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
+        return Multiply<Expression>{Negate(Exponent(Cosecant(this->GetOperand()),Real(2)))/*-sin(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
     }
 
 }
