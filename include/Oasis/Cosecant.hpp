@@ -62,4 +62,4 @@ namespace Oasis {
         EXPRESSION_TYPE(Cosecant)
         EXPRESSION_CATEGORY(0)
     };}
-#endif //SECANT_HPP
+#endif //COSECANT_HPP

@@ -64,7 +64,7 @@ namespace Oasis {
     {
         // TODO: Implement Secant
         // d/dx(tan(f(x))) = sec^2(f(x))*d/dx(f(x))
-        return Multiply<Expression>{Secant(this->GetOperand())/*-sin(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
+        return Multiply<Expression>{Add{Exponent(Tangent(this->GetOperand()),Real(2))/*-sin(x)*/,Real(1)},*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
     }
 
 }

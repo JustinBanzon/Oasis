@@ -3,6 +3,7 @@
 //
 
 #include "Oasis/Add.hpp"
+#include "Oasis/Cosine.hpp"
 #include "Oasis/Exponent.hpp"
 #include "Oasis/Imaginary.hpp"
 #include "Oasis/Integral.hpp"
@@ -13,6 +14,7 @@
 #include "Oasis/Pi.hpp"
 #include "Oasis/Sine.hpp"
 #include "Oasis/Secant.hpp"
+#include "Oasis/Undefined.hpp"
 
 #define EPSILON 10E-6
 
@@ -26,16 +28,16 @@ namespace Oasis {
             return std::make_unique<Real>(1);
         }
         if (auto RealCase = Real::Specialize(*simplifiedOperand); RealCase != nullptr) {
-            auto val = cos(RealCase->GetValue();
+            auto val = cos(RealCase->GetValue());
             if (abs(val) < EPSILON) {
              return std::make_unique<Undefined>(Undefined());
             }
-            return std::make_unique<Real>(1/val));
+            return std::make_unique<Real>(1/val);
         }
         if (auto MulPiCase = Multiply<Pi,Real>::Specialize(*simplifiedOperand); MulPiCase != nullptr) {
+            const Real& multiple = MulPiCase->GetLeastSigOp();
             auto val = cos(Pi::GetValue()*multiple.GetValue());
             if (abs(val) < EPSILON) {}
-            const Real& multiple = MulPiCase->GetLeastSigOp();
             return std::make_unique<Real>(1/val);
         }
         if (auto DivPiCase = Divide<Pi,Real>::Specialize(*simplifiedOperand); DivPiCase != nullptr) {
@@ -55,7 +57,7 @@ namespace Oasis {
     {
         // ToDo: implement Secant derivative
         // d/dx(cos(f(x))) = sin(f(x))*d/dx(f(x))
-        return Multiply<Expression>{Multiply(Sine(this->GetOperand()),Exponent(Secant(this->GetOperand()),Real(2)))/*-sin(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
+        return Multiply<Expression>{Divide{Sine(this->GetOperand()),Exponent(Cosine(this->GetOperand()),Real(2))}/*-sin(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
     }
 
 

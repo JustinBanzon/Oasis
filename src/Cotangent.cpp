@@ -12,7 +12,7 @@
 #include "Oasis/Matrix.hpp"
 #include "Oasis/Multiply.hpp"
 #include "Oasis/Pi.hpp"
-#include "Oasis/Secant.hpp"
+#include "Oasis/Cosecant.hpp"
 #include "Oasis/Cotangent.hpp"
 
 #define EPSILON 10E-6
@@ -64,7 +64,7 @@ namespace Oasis {
     {
         // TODO: Implement Secant
         // d/dx(tan(f(x))) = sec^2(f(x))*d/dx(f(x))
-        return Multiply<Expression>{Secant(this->GetOperand())/*-sin(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
+        return Multiply<Expression>{Exponent(Cosecant(this->GetOperand()),Real(2))/*-sin(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
     }
 
 }

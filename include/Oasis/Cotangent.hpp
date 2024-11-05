@@ -63,4 +63,4 @@ namespace Oasis {
         EXPRESSION_CATEGORY(0)
     };
 }
-#endif //TANGENT_HPP
+#endif //COTANGENT_HPP
