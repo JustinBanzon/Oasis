@@ -17,6 +17,18 @@
 #define EPSILON 10E-6
 
 namespace Oasis {
+    Cosine<Expression>::Cosine(const Expression &Operand)
+        : UnaryExpression(Operand)
+    {
+    }
+
+    // std::unique_ptr<Expression> Cosine<Expression>::Integrate(const Expression &integrationVariable) const {
+    //     return UnaryExpression<Oasis::Cosine>::Integrate(integrationVariable);
+    // }
+    //
+    // auto Cosine<Expression>::Specialize(const Expression &other) -> std::unique_ptr<Cosine<>> {
+    // }
+    //
     auto Cosine<Expression>::Simplify() const -> std::unique_ptr<Expression>
     {
         //    std::cout<<"Cosine Simplify"<<std::endl;
@@ -41,7 +53,7 @@ namespace Oasis {
             const Real& multiple = MulDivPiCase->GetMostSigOp().GetLeastSigOp();
             return std::make_unique<Real>(cos(Pi::GetValue()*multiple.GetValue()/divisor.GetValue()));
         }
-        return std::make_unique<Real>(-128);
+        return this->Copy();
     }
 
 
@@ -50,6 +62,18 @@ namespace Oasis {
         // d/dx(cos(f(x))) = sin(f(x))*d/dx(f(x))
         return Multiply<Expression>{Negate(Sine(this->GetOperand()))/*-sin(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
     }
+    auto Cosine<Expression>::Integrate(const Expression& integrationVariable) const -> std::unique_ptr<Expression>
+    {
+        // TODO: Implement
+        //integral(sin(x) dv)= sin(x)*v-integral(v cos(x) dx)
+        //integrate(sin(x) dx) = -cos(x)
+        if(auto variable = Variable::Specialize(integrationVariable); variable != nullptr) {
+            //integrate(sin(x) dx) = -cos(x) + C
+            return Negate<Expression>(Sine<Expression>(this->GetOperand())).Generalize();
+        }
+        Integral<Expression> integral { *(this->Copy()), *(integrationVariable.Copy()) };
 
+        return integral.Copy();
+    }
 
 }

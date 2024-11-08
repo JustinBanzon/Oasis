@@ -64,7 +64,7 @@ auto Cosecant<Expression>::Integrate(const Expression& integrationVariable) cons
 auto Cosecant<Expression>::Differentiate(const Expression& differentiationVariable) const -> std::unique_ptr<Expression>
 {
     // d/dx sin(f(x)) = cos(f(x))*d/dxf(x)
-    return Multiply<Expression>{Divide{Cosine(this->GetOperand()),Exponent(Sine(this->GetOperand()),Real(2))}/*cos(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
+    return Multiply<Expression>{Divide{Negate(Cosine(this->GetOperand())),Exponent(Sine(this->GetOperand()),Real(2))}/*cos(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
 }
 
 }

@@ -56,6 +56,15 @@ class Cosine;
 template <IExpression OperandT>
 class Tangent;
 
+template <IExpression OperandT>
+class Cosecant;
+
+template <IExpression OperandT>
+class Secant;
+
+template <IExpression OperandT>
+class Cotangent;
+
 class SerializationVisitor {
 public:
     virtual void Serialize(const Real& real) = 0;
@@ -76,6 +85,9 @@ public:
     virtual void Serialize(const Sine<Expression>& Sine) = 0;
     virtual void Serialize(const Cosine<Expression>& Cosine) = 0;
     virtual void Serialize(const Tangent<Expression>& Tangent) = 0;
+    virtual void Serialize(const Cosecant<Expression>& Sine) = 0;
+    virtual void Serialize(const Secant<Expression>& Cosine) = 0;
+    virtual void Serialize(const Cotangent<Expression>& Tangent) = 0;
     virtual void Serialize(const Derivative<Expression, Expression>& derivative) = 0;
     virtual void Serialize(const Integral<Expression, Expression>& integral) = 0;
 

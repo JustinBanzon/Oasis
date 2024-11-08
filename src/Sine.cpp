@@ -42,7 +42,7 @@ auto Sine<Expression>::Simplify() const -> std::unique_ptr<Expression>
         const Real& multiple = MulDivPiCase->GetMostSigOp().GetLeastSigOp();
         return std::make_unique<Real>(sin(Pi::GetValue()*multiple.GetValue()/divisor.GetValue()));
     }
-    return std::make_unique<Real>(-128);
+    return this->Copy();
 }
 
 auto Sine<Expression>::Integrate(const Expression& integrationVariable) const -> std::unique_ptr<Expression>
@@ -52,7 +52,7 @@ auto Sine<Expression>::Integrate(const Expression& integrationVariable) const ->
     //integrate(sin(x) dx) = -cos(x)
     if(auto variable = Variable::Specialize(integrationVariable); variable != nullptr) {
         //integrate(sin(x) dx) = -cos(x) + C
-        return Negate(Cosine(integrationVariable)).Specialize(*variable);
+        return Negate<Expression>(Cosine<Expression>(this->GetOperand())).Generalize();
     }
     Integral<Expression> integral { *(this->Copy()), *(integrationVariable.Copy()) };
 
@@ -62,7 +62,8 @@ auto Sine<Expression>::Integrate(const Expression& integrationVariable) const ->
 auto Sine<Expression>::Differentiate(const Expression& differentiationVariable) const -> std::unique_ptr<Expression>
 {
     // d/dx sin(f(x)) = cos(f(x))*d/dxf(x)
-    return Multiply<Expression>{Cosine(this->GetOperand())/*cos(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
+    return Multiply<Expression>{Cosine(this->GetOperand())/*cos(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Simplify();
+    //return nullptr;
 }
 
 }

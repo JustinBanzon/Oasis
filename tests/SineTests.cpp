@@ -11,6 +11,7 @@
 #include "Oasis/Divide.hpp"
 #include "Oasis/Real.hpp"
 #include "Oasis/Sine.hpp"
+#include "Oasis/Cosine.hpp"
 #include "Oasis/Pi.hpp"
 #include "Oasis/Variable.hpp"
 
@@ -38,6 +39,7 @@ TEST_CASE("Sine 1/2 Pi","[Sin]")
     const Oasis::Real expected {1} ;
     REQUIRE(simplified->Equals(expected));
 }
+//Sine of a unit fraction of pi tests
 TEST_CASE("Sine Pi/2","[Sin]")
 {
     const Oasis::Sine sineHalfPiDiv {
@@ -101,7 +103,7 @@ TEST_CASE("Sine 3/2 Pi","[Sin]")
 
 TEST_CASE("Sine 3Pi/2","[Sin]")
 {
-    std::cout<<"Testing sin(3Pi/2)"<<std::endl;
+    //Testing sin(3Pi/2) with division
     const Oasis::Sine sineThreeHalvesPiMulDiv {
          Oasis::Divide{ Oasis::Multiply{ Oasis::Real{3},Oasis::Pi{}},Oasis::Real{2}}
     };
@@ -111,11 +113,31 @@ TEST_CASE("Sine 3Pi/2","[Sin]")
 }
 TEST_CASE("Sine 3Pi/4","[Sin]")
 {
-    std::cout<<"Testing sin(3Pi/4)"<<std::endl;
+    //Testing sin(3Pi/4)
     const Oasis::Sine sineThreeHalvesPiMulDiv {
         Oasis::Divide{ Oasis::Multiply{ Oasis::Real{3},Oasis::Pi{}},Oasis::Real{4}}
     };
     const auto simplified = sineThreeHalvesPiMulDiv.Simplify();
     const Oasis::Real expected {(std::sqrt(2)/2)} ;
     REQUIRE(simplified->Equals(expected));
+}
+TEST_CASE("Simple Derivative","[Sin]") {
+    //Testing derivative of sin(x)
+    const Oasis::Sine func{
+        Oasis::Variable{"x"}
+    };
+    const auto derivative = func.Differentiate(Oasis::Variable{"x"});
+    const Oasis::Cosine expected {Oasis::Variable{"x"}};
+    REQUIRE(derivative->Equals(expected));
+}
+TEST_CASE("Intermediate Derivative","[Sin]") {
+    //Testing derivative of sin(x^2)
+    const Oasis::Sine func{
+        Oasis::Exponent{Oasis::Variable{"x"},Oasis::Real{2}}
+    };
+    //d/dx sin(x)
+    const auto derivative = func.Differentiate(Oasis::Variable{"x"});
+    //should simplify to cos(x)
+    const Oasis::Multiply expected {Oasis::Cosine{Oasis::Exponent{Oasis::Variable{"x"},Oasis::Real{2}}},Oasis::Multiply{Oasis::Variable{"x"},Oasis::Real{2}}};
+    REQUIRE(derivative->Equals(expected));
 }
