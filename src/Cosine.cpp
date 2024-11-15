@@ -35,7 +35,7 @@ namespace Oasis {
         auto simplifiedOperand = op ? op->Simplify() : nullptr;
 
         if (auto PiCase = Pi::Specialize(*simplifiedOperand); PiCase != nullptr) {
-            return std::make_unique<Real>(1);
+            return std::make_unique<Real>(-1);
         }
         if (auto RealCase = Real::Specialize(*simplifiedOperand); RealCase != nullptr) {
             return std::make_unique<Real>(cos(RealCase->GetValue()));

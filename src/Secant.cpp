@@ -19,6 +19,10 @@
 #define EPSILON 10E-6
 
 namespace Oasis {
+    Secant<Expression>::Secant(const Expression& operand)
+    : UnaryExpression(operand)
+    {
+    }
     auto Secant<Expression>::Simplify() const -> std::unique_ptr<Expression>
     {
         //    std::cout<<"Cosine Simplify"<<std::endl;
@@ -59,6 +63,18 @@ namespace Oasis {
         // d/dx(cos(f(x))) = sin(f(x))*d/dx(f(x))
         return Multiply<Expression>{Divide{Sine(this->GetOperand()),Exponent(Cosine(this->GetOperand()),Real(2))}/*-sin(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
     }
+    auto Secant<Expression>::Integrate(const Expression& integrationVariable) const -> std::unique_ptr<Expression>
+    {
+        // TODO: Implement
+        //integral(sin(x) dv)= sin(x)*v-integral(v cos(x) dx)
+        //integrate(sin(x) dx) = -cos(x)
+        if(auto variable = Variable::Specialize(integrationVariable); variable != nullptr) {
+            //integrate(sin(x) dx) = -cos(x) + C
+            return Exponent<Expression>(Secant<Expression>(this->GetOperand()),Real(2)).Generalize();
+        }
+        Integral<Expression> integral { *(this->Copy()), *(integrationVariable.Copy()) };
 
+        return integral.Copy();
+    }
 
 }

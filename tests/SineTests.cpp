@@ -51,7 +51,7 @@ TEST_CASE("Sine Pi/2","[Sin]")
 }
 TEST_CASE("Sine Pi/3","[Sin]")
 {
-    std::cout<<"Testing sin(Pi/3)"<<std::endl;
+    //Testing sin(Pi/3)
     const Oasis::Sine sineQuarterPiDiv {
         Oasis::Divide{ Oasis::Pi{},Oasis::Real{3}}
     };
@@ -61,7 +61,7 @@ TEST_CASE("Sine Pi/3","[Sin]")
 }
 TEST_CASE("Sine Pi/4","[Sin]")
 {
-    std::cout<<"Testing sin(Pi/4)"<<std::endl;
+    //Testing sin(Pi/4)
     const Oasis::Sine sinThirdPiDiv {
         Oasis::Divide{ Oasis::Pi{},Oasis::Real{4}}
     };
@@ -71,13 +71,12 @@ TEST_CASE("Sine Pi/4","[Sin]")
 }
 TEST_CASE("Sine Pi/6","[Sin]")
 {
-    std::cout<<"Testing sin(Pi/6)"<<std::endl;
+    //Testing sin(Pi/6)
     const Oasis::Sine sinSixthPiDiv {
         Oasis::Divide{ Oasis::Pi{},Oasis::Real{6}}
     };
     const auto simplified = sinSixthPiDiv.Simplify();
     auto simplified_real = Oasis::Real::Specialize(*simplified);
-    std::cout <<"sine returned value "<< simplified_real->GetValue() <<std::endl;
     REQUIRE_THAT(simplified_real->GetValue(), Catch::Matchers::WithinAbs(0.5, EPSILON));
 }
 //sin(<pi>) -> 0

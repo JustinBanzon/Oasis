@@ -18,6 +18,10 @@
 #define EPSILON 10E-6
 
 namespace Oasis {
+    Cotangent<Expression>::Cotangent(const Expression& operand)
+    : UnaryExpression(operand)
+    {
+    }
     auto Cotangent<Expression>::Simplify() const -> std::unique_ptr<Expression>
     {
         //    std::cout<<"Cosine Simplify"<<std::endl;

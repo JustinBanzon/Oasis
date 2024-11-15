@@ -10,6 +10,7 @@
 #include "Real.hpp"
 
 namespace Oasis {
+
     template <IExpression OperandT>
     class Tangent;
 

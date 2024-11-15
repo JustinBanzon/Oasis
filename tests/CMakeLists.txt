@@ -23,7 +23,9 @@ set(Oasis_TESTS
     SineTests.cpp
     SubtractTests.cpp
     UnaryExpressionTests.cpp
-    SineTests.cpp)
+    SineTests.cpp
+    CosineTests.cpp
+    TangentTests.cpp)
 
 # Adds an executable target called "OasisTests" to be built from sources files.
 add_executable(OasisTests ${Oasis_TESTS})
