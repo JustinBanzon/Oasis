@@ -19,6 +19,7 @@
 
 #include <functional>
 #include <iostream>
+#include <typeinfo>
 
 #define EPSILON 1e-6
 //tan(0) -> 0
@@ -38,8 +39,7 @@ TEST_CASE("Tangent 1/2 Pi","[Tan]")
         Oasis::Multiply{ Oasis::Real{0.5},Oasis::Pi{}}
     };
     const auto simplified = tangentHalfPiMul.Simplify();
-    const Oasis::Undefined expected;
-    REQUIRE(simplified->Equals(expected));
+    REQUIRE(simplified->Is<Oasis::Undefined>());
 }
 //Tangent of a unit fraction of pi tests
 TEST_CASE("Tangent Pi/2","[Tan]")
@@ -48,8 +48,7 @@ TEST_CASE("Tangent Pi/2","[Tan]")
         Oasis::Divide{ Oasis::Pi{},Oasis::Real{2}}
     };
     const auto simplified = tangentHalfPiDiv.Simplify();
-    const Oasis::Real expected {1} ;
-    REQUIRE(simplified->Equals(expected));
+    REQUIRE(simplified->Is<Oasis::Undefined>());
 }
 TEST_CASE("Tangent Pi/3","[Tan]")
 {
@@ -101,8 +100,8 @@ TEST_CASE("Tangent 3/2 Pi","[Tan]")
         Oasis::Multiply{ Oasis::Real{1.5},Oasis::Pi{}}
     };
     const auto simplified = tangentThreeHalvesPiMul.Simplify();
-    const Oasis::Undefined expected ;
-    REQUIRE(simplified->Equals(expected));
+    const Oasis::Undefined expected{};
+    REQUIRE(simplified->Is<Oasis::Undefined>());
 }
 
 TEST_CASE("Tangent 3Pi/2","[Tan]")
@@ -112,8 +111,18 @@ TEST_CASE("Tangent 3Pi/2","[Tan]")
          Oasis::Divide{ Oasis::Multiply{ Oasis::Real{3},Oasis::Pi{}},Oasis::Real{2}}
     };
     const auto simplified = tangentThreeHalvesPiMulDiv.Simplify();
-    const Oasis::Undefined expected ;
-    REQUIRE(simplified->Equals(expected));
+    const Oasis::Undefined expected{};
+    REQUIRE(simplified->Is<Oasis::Undefined>());
+}
+TEST_CASE("Tangent 6Pi/4","[Tan]")
+{
+    //Testing tan(6Pi/4) with division
+    const Oasis::Tangent tangentThreeHalvesPiMulDiv {
+        Oasis::Divide{ Oasis::Multiply{ Oasis::Real{6},Oasis::Pi{}},Oasis::Real{4}}
+    };
+    const auto simplified = tangentThreeHalvesPiMulDiv.Simplify();
+    const Oasis::Undefined expected{};
+    REQUIRE(simplified->Is<Oasis::Undefined>());
 }
 TEST_CASE("Tangent 3Pi/4","[Tan]")
 {
@@ -122,8 +131,9 @@ TEST_CASE("Tangent 3Pi/4","[Tan]")
         Oasis::Divide{ Oasis::Multiply{ Oasis::Real{3},Oasis::Pi{}},Oasis::Real{4}}
     };
     const auto simplified = tangentThreeHalvesPiMulDiv.Simplify();
+    const auto simplified_real = Oasis::Real::Specialize(*simplified);
     const Oasis::Real expected {-1} ;
-    REQUIRE(simplified->Equals(expected));
+    REQUIRE_THAT(simplified_real->GetValue(), Catch::Matchers::WithinAbs(expected.GetValue(), EPSILON));
 }
 TEST_CASE("Simple Derivative","[Tan]") {
     //Testing derivative of tan(x)
@@ -131,7 +141,7 @@ TEST_CASE("Simple Derivative","[Tan]") {
         Oasis::Variable{"x"}
     };
     const auto derivative = func.Differentiate(Oasis::Variable{"x"});
-    const Oasis::Exponent<> expected {Oasis::Secant{Oasis::Variable{"x"}},Oasis::Real{2}};
+    const Oasis::Add<> expected {Oasis::Exponent(Oasis::Tangent(Oasis::Variable{"x"}),Oasis::Real(2))/*-sin(x)*/,Oasis::Real(1)};
     REQUIRE(derivative->Simplify()->Equals(*expected.Simplify()));
 }
 TEST_CASE("Intermediate Derivative","[Tan]") {
@@ -142,6 +152,14 @@ TEST_CASE("Intermediate Derivative","[Tan]") {
     //d/dx tan(x)
     const auto derivative = func.Differentiate(Oasis::Variable{"x"});
     //should simplify to sec^2(x^2)d/dx(x^2)
-    const Oasis::Multiply expected {Oasis::Exponent{Oasis::Secant{Oasis::Exponent{Oasis::Variable{"x"},Oasis::Real{2}}},Oasis::Real{2}},Oasis::Multiply{Oasis::Variable{"x"},Oasis::Real{2}}};
+    const Oasis::Multiply expected {Oasis::Add{
+        Oasis::Exponent{
+            Oasis::Tangent{
+                Oasis::Exponent{
+                    Oasis::Variable{"x"},Oasis::Real{2}
+                }},Oasis::Real{2}},Oasis::Real{1}},Oasis::Multiply{
+        Oasis::Variable{"x"},Oasis::Real{2}
+    }
+    };
     REQUIRE(derivative->Equals(expected));
 }

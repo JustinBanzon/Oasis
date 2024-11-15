@@ -67,7 +67,7 @@ namespace Oasis {
     {
         // TODO: Implement Secant
         // d/dx(tan(f(x))) = sec^2(f(x))*d/dx(f(x))
-        return Multiply<Expression>{Add{Exponent(Secant(this->GetOperand()),Real(2))/*-sin(x)*/,Real(1)},*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
+        return Multiply<Expression>{Add{Exponent(Tangent(this->GetOperand()),Real(2))/*-sin(x)*/,Real(1)},*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
     }
     //tan(x) = sin(x)/cos(x), d/dx(tan(f(x))) = cos^2(f(x))+sin^2(f(x))/cos^2(f(x))*d/dx(f(x)) = sec^2(f(x))*d/dx(f(x))
     auto Tangent<Expression>::Integrate(const Expression& integrationVariable) const -> std::unique_ptr<Expression>
