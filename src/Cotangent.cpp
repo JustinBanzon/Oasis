@@ -66,9 +66,12 @@ namespace Oasis {
 
     auto Cotangent<Expression>::Differentiate(const Expression& differentiationVariable) const -> std::unique_ptr<Expression>
     {
-        // TODO: Implement Secant
-        // d/dx(tan(f(x))) = sec^2(f(x))*d/dx(f(x))
-        return Multiply<Expression>{Negate(Exponent(Cosecant(this->GetOperand()),Real(2)))/*-sin(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
+        return Multiply<Expression>{Negate(Add(Exponent(Cotangent(this->GetOperand()),Real(2)),Real(1)))/*-sin(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
     }
+    auto Cotangent<Expression>::Integrate(const Expression& integrationVariable) const -> std::unique_ptr<Expression> {
+        // TODO: Implement
+        Integral<Expression> integral { *(this->Copy()), *(integrationVariable.Copy()) };
 
+        return integral.Copy();
+    }
 }

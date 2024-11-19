@@ -60,18 +60,14 @@ namespace Oasis {
     auto Secant<Expression>::Differentiate(const Expression& differentiationVariable) const -> std::unique_ptr<Expression>
     {
         // ToDo: implement Secant derivative
-        // d/dx(cos(f(x))) = sin(f(x))*d/dx(f(x))
-        return Multiply<Expression>{Divide{Sine(this->GetOperand()),Exponent(Cosine(this->GetOperand()),Real(2))}/*-sin(x)*/,*this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
+        // d/dx(sec(f(x))) = (1-(-sin(f(x))))/(cos^2(f(x)))*d/dx(f(x))
+        return Multiply<Expression>{
+            Divide{Sine(this->GetOperand()),Exponent(Cosine(this->GetOperand()),Real(2))}/*sin(x)/cos^2(x)*/,
+            *this->GetOperand().Differentiate(differentiationVariable)/*d/dx(x)*/}.Generalize();
     }
     auto Secant<Expression>::Integrate(const Expression& integrationVariable) const -> std::unique_ptr<Expression>
     {
         // TODO: Implement
-        //integral(sin(x) dv)= sin(x)*v-integral(v cos(x) dx)
-        //integrate(sin(x) dx) = -cos(x)
-        if(auto variable = Variable::Specialize(integrationVariable); variable != nullptr) {
-            //integrate(sin(x) dx) = -cos(x) + C
-            return Exponent<Expression>(Secant<Expression>(this->GetOperand()),Real(2)).Generalize();
-        }
         Integral<Expression> integral { *(this->Copy()), *(integrationVariable.Copy()) };
 
         return integral.Copy();

@@ -3,6 +3,7 @@
 //
 
 #include "Oasis/Sine.hpp"
+#include "Oasis/Add.hpp"
 #include "Oasis/Multiply.hpp"
 #include "Oasis/Cosine.hpp"
 #include "Oasis/Divide.hpp"
@@ -50,9 +51,25 @@ auto Sine<Expression>::Integrate(const Expression& integrationVariable) const ->
     // TODO: Implement
     //integral(sin(x) dv)= sin(x)*v-integral(v cos(x) dx)
     //integrate(sin(x) dx) = -cos(x)
+    //sin(x)
     if(auto variable = Variable::Specialize(integrationVariable); variable != nullptr) {
         //integrate(sin(x) dx) = -cos(x) + C
         return Negate<Expression>(Cosine<Expression>(this->GetOperand())).Generalize();
+    }
+    //sin(x)
+    if(auto offset = Add<Real,Variable>::Specialize(integrationVariable); offset != nullptr) {
+        //integrate(sin(x) dx) = -cos(x) + C
+        return Negate<Expression>(Cosine<Expression>(this->GetOperand())).Generalize();
+    }
+    if(auto slope = Multiply<Real,Variable>::Specialize(integrationVariable); slope != nullptr) {
+        //integrate(sin(x) dx) = -cos(x) + C
+        Real slope_value = slope->GetMostSigOp();
+        return Divide<Expression,Real>(Negate<Expression>(Cosine<Expression>(this->GetOperand())),slope_value).Generalize();
+    }
+    if(auto linear = Add<Multiply<Real,Variable>,Real>::Specialize(integrationVariable); linear != nullptr) {
+        //integrate(sin(x) dx) = -cos(x) + C
+        Real slope_value = linear->GetMostSigOp().GetMostSigOp();
+        return Divide<Expression,Real>(Negate<Expression>(Cosine<Expression>(this->GetOperand())),slope_value).Generalize();
     }
     Integral<Expression> integral { *(this->Copy()), *(integrationVariable.Copy()) };
 
